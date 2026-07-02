@@ -9,24 +9,53 @@ import getprofileRouter from "./routes/profile.routes"
 const app: Application = express();
 
 // ✅ Correct multi-origin setup
+// const allowedOrigins = [
+//   'http://localhost:3000',
+//   'https://pixzar-habt-tracker-d8of4l4ae-olosunde-david-olamipos-projects.vercel.app'
+// ];
+
+
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     // Allow requests with no origin (like mobile apps or curl requests)
+//     if (!origin) return callback(null, true);
+    
+//     if (allowedOrigins.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true
+// }));
+
+// for the purpose of vercel, it updates urls
 const allowedOrigins = [
-  'http://localhost:3000',
-  'https://pixzar-habt-tracker-d8of4l4ae-olosunde-david-olamipos-projects.vercel.app'
+  'http://localhost:3000'
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // 1. Allow server-to-server or tool requests (like Postman/mobile apps)
     if (!origin) return callback(null, true);
     
+    // 2. Allow your local development server
     if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+      return callback(null, true);
     }
+    
+    // 3. Dynamic Check: Trust ANY frontend deployment from your Vercel account
+    // This looks for domains ending with '.vercel.app'
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // 4. Block unknown websites
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true
 }));
+
 
 
 // import routers here later dave
