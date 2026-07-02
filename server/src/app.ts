@@ -57,6 +57,9 @@ app.use(cors({
 }));
 
 
+app.use(express.json())
+
+
 
 // import routers here later dave
 app.use("/users",userRouter)
